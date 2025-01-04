@@ -85,5 +85,5 @@ if exists('g:errtags_events')
 	endfor
 endif
 
-command! DoErrtagsNotices :call DoNotices()
+command! DoErrtagsNotices :call DoErrtagsNotices()
 " #pragma endregion
