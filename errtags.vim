@@ -77,7 +77,6 @@ function! DoNotices()
 endfunction
 " #pragma endregion
 
-let g:errtags_events = ["BufEnter", "BufWrite"]
 " --- Hook up everything ---
 " #pragma region
 if exists('g:errtags_events')

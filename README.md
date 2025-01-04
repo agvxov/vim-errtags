@@ -6,21 +6,22 @@ Thats disguasting.
 
 The right way should be to hook into the actual build system.
 
-## Process
-Make is our friend, because its hackable.
-
-    token := genrate-session-token()
-    foreach t in $tools do
-        $t($token)
-    done
-
-The session token is a number used to differentiate between compiles.
-
-Every tool is wrapped, so that it emits its output to both normally and piped into errtags.
-
-Errtags is responsible for grepping error messages and storing them in a csv-like file.
-
-The csv is passed to vim so it can display the errors.
+For the details, see [documentation.md](documentation.md).
 
 ## Dependencies
 + Tcl
+
+## Installation
+1. Clone the source
+2. Run:
+
+    $ make && make install
+
+3. Update your config files
+
+    # .vimrc
+    let g:errtags_events = ["BufEnter", "BufWrite"]
+    # .bashrc
+    alias make='make.sh CC=cc.sh'
+
+4. Enjoy
