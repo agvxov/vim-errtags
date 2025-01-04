@@ -7,6 +7,7 @@ bundle: clean
 install: bundle
 	tar -x -f errtags.tar --dereference -C ~/
 	-mkdir ~/bin/
+	cp errtags ~/bin/
 	cp wrappers/* ~/bin/
 
 clean:
