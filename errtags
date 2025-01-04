@@ -1,0 +1,39 @@
+#!/usr/bin/tclsh
+
+set outputFilename "/home/anon/stow/.cache/errtags.tags"
+
+set ERRTAGS_SESSION [expr { \
+    [info exists env(ERRTAGS_SESSION)] ? $env(ERRTAGS_SESSION) : "" \
+}]
+
+if {$ERRTAGS_SESSION eq ""} {
+    set ERRTAGS_SESSION [expr {int(rand() * 1000) + 1}]
+}
+
+# --- Setup output
+proc getMode {fileName errtagsSession} {
+    if {[catch {set fileId [open $fileName r]}]} { return w }
+    
+    set firstLine [gets $fileId]
+    close $fileId
+
+    return [expr {[string match "#$errtagsSession" $firstLine] ? "a" : "w"}]
+}
+
+set mode [getMode $outputFilename $ERRTAGS_SESSION]
+
+set output [open $outputFilename $mode]
+
+# --- Header rewrite
+if {$mode == "w"} {
+    puts $output "#$ERRTAGS_SESSION"
+}
+
+# --- Error translation
+set errex {(.+):(\d+):(\d+): error: (.*)}
+while {[gets stdin line] >= 0} {
+    if {[regexp $errex $line ignore sfile sline scol msg]} {
+        puts $output "$sfile:$sline:$scol:$msg"
+    }
+}
+close $output
