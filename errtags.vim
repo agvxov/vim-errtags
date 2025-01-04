@@ -69,7 +69,11 @@ function! DoErrtagsNotices()
     call prop_remove({ 'type': 'ErrtagsHighlight' })
     call prop_remove({ 'type': 'ErrtagsMessage' })
 
-    let l:lines = readfile(g:errtags_cache)
+    try
+        let l:lines = readfile(g:errtags_cache)
+    catch /E484/
+        return
+    endtry
 
     let l:notices = ParseErrtagsNotices(l:lines)
 
