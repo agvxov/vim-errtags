@@ -1,46 +1,46 @@
 " --- Define our prop types ---
 " #pragma region
-call prop_type_delete('ErrorHighlight')
-call prop_type_delete('CommentHighlight')
+call prop_type_delete('ErrtagsHighlight')
+call prop_type_delete('ErrtagsMessage')
 
 hi link ErrTagsError   ErrorMsg
 hi link ErrTagsMessage Comment
 
-call prop_type_add('ErrorHighlight', {
+call prop_type_add('ErrtagsHighlight', {
       \ 'highlight': 'ErrTagsError',
       \ })
 
-call prop_type_add('CommentHighlight', {
+call prop_type_add('ErrtagsMessage', {
       \ 'highlight': 'ErrTagsMessage',
       \ })
 " #pragma endregion
 
 " --- Main logic ---
 " #pragma region
-function! AddNotice(lnum, col, message)
-  try
+function! AddErrtagsNotice(lnum, col, message)
+  try " NOTE: the column might have been deleted, thats no excuse to halt and catch fire
     call prop_add(a:lnum, a:col, {
-          \ 'type': 'ErrorHighlight',
+          \ 'type': 'ErrtagsHighlight',
           \ 'length': 1
           \ })
   catch /E964/ | endtry
 
     call prop_add(a:lnum, 0, {
-          \ 'type': 'CommentHighlight',
+          \ 'type': 'ErrtagsMessage',
           \ 'text': ' # E: ' . a:message,
           \ 'text_align': 'after'
           \ })
 endfunction
 
-function AddNotices(notices)
+function AddErrtagsNotices(notices)
     for l:notice in a:notices
         if l:notice['fname'] == expand('%:t')
-            call AddNotice(l:notice.lnum, l:notice.col, l:notice.text)
+            call AddErrtagsNotice(l:notice.lnum, l:notice.col, l:notice.text)
         endif
     endfor
 endfunction
 
-function! ParseNotices(lines)
+function! ParseErrtagsNotices(lines)
     let l:errors = []
 
     for l:line in a:lines
@@ -65,15 +65,15 @@ function! ParseNotices(lines)
     return l:errors
 endfunction
 
-function! DoNotices()
-    call prop_remove({ 'type': 'ErrorHighlight' })
-    call prop_remove({ 'type': 'CommentHighlight' })
+function! DoErrtagsNotices()
+    call prop_remove({ 'type': 'ErrtagsHighlight' })
+    call prop_remove({ 'type': 'ErrtagsMessage' })
 
     let l:lines = readfile(expand('~/stow/.cache/errtags.tags'))
 
-    let l:notices = ParseNotices(l:lines)
+    let l:notices = ParseErrtagsNotices(l:lines)
 
-    call AddNotices(l:notices)
+    call AddErrtagsNotices(l:notices)
 endfunction
 " #pragma endregion
 
@@ -81,9 +81,9 @@ endfunction
 " #pragma region
 if exists('g:errtags_events')
 	for e in g:errtags_events
-		execute "autocmd " . e . " * DoNotices"
+		execute "autocmd " . e . " * DoErrtagsNotices"
 	endfor
 endif
 
-command! DoNotices :call DoNotices()
+command! DoErrtagsNotices :call DoNotices()
 " #pragma endregion
