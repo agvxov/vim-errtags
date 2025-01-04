@@ -14,14 +14,16 @@ For the details, see [documentation.md](documentation.md).
 ## Installation
 1. Clone the source
 2. Run:
-
+```sh
     $ make && make install
+```
 
 3. Update your config files
-
-    // .vimrc
+```sh
+    # .vimrc
     let g:errtags_events = ["BufEnter", "BufWrite"]
-    // .bashrc
+    # .bashrc
     alias make='make.sh CC=cc.sh'
+```
 
 4. Enjoy
