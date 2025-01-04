@@ -89,7 +89,9 @@ if exists('g:errtags_events')
 	endfor
 endif
 
-if expand('$ERRTAGS_CACHE_FILE') == '$ERRTAGS_CACHE_FILE'
+if expand('$ERRTAGS_CACHE_FILE') != '$ERRTAGS_CACHE_FILE'
+    let g:errtags_cache = expand('$ERRTAGS_CACHE_FILE')
+else
     let g:errtags_cache = expand('$XDG_CACHE_HOME/errtags.tags')
 endif
 
