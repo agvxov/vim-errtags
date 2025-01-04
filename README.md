@@ -19,9 +19,9 @@ For the details, see [documentation.md](documentation.md).
 
 3. Update your config files
 
-    # .vimrc
+    // .vimrc
     let g:errtags_events = ["BufEnter", "BufWrite"]
-    # .bashrc
+    // .bashrc
     alias make='make.sh CC=cc.sh'
 
 4. Enjoy
