@@ -69,7 +69,7 @@ function! DoErrtagsNotices()
     call prop_remove({ 'type': 'ErrtagsHighlight' })
     call prop_remove({ 'type': 'ErrtagsMessage' })
 
-    let l:lines = readfile(expand('~/stow/.cache/errtags.tags'))
+    let l:lines = readfile(g:errtags_cache)
 
     let l:notices = ParseErrtagsNotices(l:lines)
 
@@ -83,6 +83,10 @@ if exists('g:errtags_events')
 	for e in g:errtags_events
 		execute "autocmd " . e . " * DoErrtagsNotices"
 	endfor
+endif
+
+if expand('$ERRTAGS_CACHE_FILE') == '$ERRTAGS_CACHE_FILE'
+    let g:errtags_cache = expand('$XDG_CACHE_HOME/errtags.tags')
 endif
 
 command! DoErrtagsNotices :call DoErrtagsNotices()

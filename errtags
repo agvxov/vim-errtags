@@ -1,6 +1,9 @@
 #!/usr/bin/tclsh
 
-set outputFilename "/home/anon/stow/.cache/errtags.tags"
+set outputFilename [expr { \
+    [info exists env(ERRTAGS_CACHE_FILE)] ? \
+        $env(ERRTAGS_CACHE_FILE) : "$env(XDG_CACHE_HOME)/errtags.tags"
+}]
 
 set ERRTAGS_SESSION [expr { \
     [info exists env(ERRTAGS_SESSION)] ? $env(ERRTAGS_SESSION) : "" \
