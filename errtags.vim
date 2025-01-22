@@ -34,7 +34,7 @@ endfunction
 
 function AddErrtagsNotices(notices)
     for l:notice in a:notices
-        if l:notice['fname'] == expand('%:t')
+        if fnamemodify(l:notice['fname'], ':t') == expand('%:t')
             call AddErrtagsNotice(l:notice.lnum, l:notice.col, l:notice.text)
         endif
     endfor
