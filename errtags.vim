@@ -47,10 +47,10 @@ function! ParseErrtagsNotices(lines)
         let l:fields = split(l:line, ':')
 
         if len(l:fields) >= 2
-            let l:filename = l:fields[0]
-            let l:line_number = l:fields[1]
+            let l:filename      = l:fields[0]
+            let l:line_number   = l:fields[1]
             let l:column_number = l:fields[2]
-            let l:message = join(l:fields[3:], ':')
+            let l:message       = join(l:fields[3:], ':')
 
             call add(l:errors, {
             \ 'fname': l:filename,
