@@ -1,0 +1,5 @@
+#!/bin/bash
+export ERRTAGS_SESSION=$RANDOM
+WRAPDIR="$(dirname "$0")"
+export PATH=$(echo $PATH | sed "s/${WRAPDIR//\//\\\/}\/*//")
+make "$@"
