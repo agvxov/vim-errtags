@@ -14,6 +14,7 @@ A tags file is generated and processed by vim.
 
 # Structure
 | File | Description |
-| wrappers/ | scripts wrapping tools, appending to our tags file |
-| errtags.vim | main vim source file; processes the tags file |
-| errtags | responsible for grepping error messages and storing them in a csv-like file; written in tcl for speed and my sanitys sake |
+| :--- | :---------- |
+| wrappers/   | Scripts wrapping tools, appending to our tags file |
+| errtags.vim | Main vim source file; processes the tags file |
+| errtags     | Responsible for grepping error messages and storing them in a csv-like file; written in tcl for speed and my sanity's sake |
