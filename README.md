@@ -16,14 +16,13 @@ For the details, see [documentation.md](documentation.md).
 2. Run:
 ```sh
 $ make && make install
+$ intall wrappers/* ~/bin/ # assuming ~/bin/ is at the start of your $PATH
 ```
 
 3. Update your config files
 ```sh
 # .vimrc
 let g:errtags_events = ["BufEnter", "BufWrite"]
-# .bashrc
-alias make='make.sh CC=cc.sh'
 ```
 
 4. Enjoy
