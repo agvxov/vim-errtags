@@ -15,7 +15,7 @@ if {$ERRTAGS_SESSION eq ""} {
 
 # --- Setup output
 proc getMode {fileName errtagsSession} {
-    if {[catch {set fileId [open $fileName r]}]} { return w }
+    if {[catch {set fileId [open $fileName r]}]} { return "w" }
     
     set firstLine [gets $fileId]
     close $fileId
