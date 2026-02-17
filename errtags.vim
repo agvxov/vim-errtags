@@ -18,18 +18,20 @@ call prop_type_add('ErrtagsMessage', {
 " --- Main logic ---
 " #pragma region
 function! AddErrtagsNotice(lnum, col, message)
-  try " NOTE: the column might have been deleted, thats no excuse to halt and catch fire
+  try 
     call prop_add(a:lnum, a:col, {
           \ 'type': 'ErrtagsHighlight',
           \ 'length': 1
           \ })
-  catch /E964/ | endtry
+  catch /E964/ | catch /E966/ | endtry
 
+  try
     call prop_add(a:lnum, 0, {
           \ 'type': 'ErrtagsMessage',
           \ 'text': ' # E: ' . a:message,
           \ 'text_align': 'after'
           \ })
+  catch /E964/ | catch /E966/ | endtry
 endfunction
 
 function AddErrtagsNotices(notices)
