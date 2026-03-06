@@ -1,10 +1,16 @@
 #!/bin/bash
-ERRTAGS=$(which errtags)
-WRAPDIR="$(dirname "$0")"
-export PATH=$(echo $PATH | sed "s/${WRAPDIR//\//\\\/}\/*//")
-gcc -fdiagnostics-color=always "$@" 2>&1 \
+self=$(readlink -f "$0")
+next_gcc=$(
+    which -a gcc |
+    while IFS= read -r p; do
+        [ "$(readlink -f "$p")" != "$self" ] && { echo "$p"; break; }
+    done
+)
+
+$next_gcc -fdiagnostics-color=always "$@" 2>&1 \
 | tee >(\
         sed -e 's/\x1b\[[0-9;]*m//g' -e 's/\x1b\[K//g' \
         | errtags
 )
+
 exit ${PIPESTATUS[0]}

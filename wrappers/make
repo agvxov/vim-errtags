@@ -1,5 +1,15 @@
 #!/bin/bash
-export ERRTAGS_SESSION=$RANDOM
-WRAPDIR="$(dirname "$0")"
-export PATH=$(echo $PATH | sed "s/${WRAPDIR//\//\\\/}\/*//")
+if [ -z "${ERRTAGS_SESSION+x}" ]; then
+    export ERRTAGS_SESSION=$RANDOM
+fi
+
+self=$(readlink -f "$0")
+next_make=$(
+    which -a make |
+    while IFS= read -r p; do
+        [ "$(readlink -f "$p")" != "$self" ] && { echo "$p"; break; }
+    done
+)
+
+exec "$next_make" "$@"
 make "$@"
