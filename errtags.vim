@@ -17,7 +17,7 @@ call prop_type_add('ErrtagsMessage', {
 
 " --- Main logic ---
 " #pragma region
-function! AddErrtagsNotice(lnum, col, message)
+function! ErrtagsAddNotice(lnum, col, message)
   try 
     call prop_add(a:lnum, a:col, {
           \ 'type': 'ErrtagsHighlight',
@@ -34,15 +34,15 @@ function! AddErrtagsNotice(lnum, col, message)
   catch /E964/ | catch /E966/ | endtry
 endfunction
 
-function AddErrtagsNotices(notices)
+function ErrtagsAddNotices(notices)
     for l:notice in a:notices
         if fnamemodify(l:notice['fname'], ':t') == expand('%:t')
-            call AddErrtagsNotice(l:notice.lnum, l:notice.col, l:notice.text)
+            call ErrtagsAddNotice(l:notice.lnum, l:notice.col, l:notice.text)
         endif
     endfor
 endfunction
 
-function! ParseErrtagsNotices(lines)
+function! ErrtagsParseNotices(lines)
     let l:errors = []
 
     for l:line in a:lines
@@ -67,9 +67,18 @@ function! ParseErrtagsNotices(lines)
     return l:errors
 endfunction
 
-function! DoErrtagsNotices()
+function! ErrtagsClearNotices()
     call prop_remove({ 'type': 'ErrtagsHighlight' })
     call prop_remove({ 'type': 'ErrtagsMessage' })
+endfunction
+
+function! ErrtagsCleanNotices()
+    call ErrtagsClearNotices()
+    call writefile([], g:errtags_cache)
+endfunction
+
+function! ErrtagsDoNotices()
+    call ErrtagsClearNotices()
 
     try
         let l:lines = readfile(g:errtags_cache)
@@ -77,9 +86,9 @@ function! DoErrtagsNotices()
         return
     endtry
 
-    let l:notices = ParseErrtagsNotices(l:lines)
+    let l:notices = ErrtagsParseNotices(l:lines)
 
-    call AddErrtagsNotices(l:notices)
+    call ErrtagsAddNotices(l:notices)
 endfunction
 " #pragma endregion
 
@@ -87,7 +96,7 @@ endfunction
 " #pragma region
 if exists('g:errtags_events')
 	for e in g:errtags_events
-		execute "autocmd " . e . " * DoErrtagsNotices"
+		execute "autocmd " . e . " * ErrtagsDoNotices"
 	endfor
 endif
 
@@ -97,5 +106,6 @@ else
     let g:errtags_cache = expand('$XDG_CACHE_HOME/errtags.tags')
 endif
 
-command! DoErrtagsNotices :call DoErrtagsNotices()
+command! ErrtagsDoNotices    :call ErrtagsDoNotices()
+command! ErrtagsCleanNotices :call ErrtagsCleanNotices()
 " #pragma endregion
