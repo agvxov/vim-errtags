@@ -1,4 +1,5 @@
 CFLAGS += -Wall -Wpedantic
 
 main:
-	${CC} ${CFLAGS} main.c
+	#${CC} ${CFLAGS} main.c
+	clang ${CFLAGS} main.c
