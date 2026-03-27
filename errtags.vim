@@ -68,8 +68,8 @@ function! ErrtagsParseNotices(lines)
 endfunction
 
 function! ErrtagsClearNotices()
-    call prop_remove({ 'type': 'ErrtagsHighlight' })
-    call prop_remove({ 'type': 'ErrtagsMessage' })
+    call prop_remove({ 'all': 1, 'type': 'ErrtagsHighlight' })
+    call prop_remove({ 'all': 1, 'type': 'ErrtagsMessage' })
 endfunction
 
 function! ErrtagsCleanNotices()
