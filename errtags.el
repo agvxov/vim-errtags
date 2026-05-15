@@ -4,12 +4,12 @@
   "Display compiler notices in source buffers."
   :group 'convenience)
 
-(defface errtags_error_face
+(defface errtags-error-face
   '((t :inherit error))
   "Face used for the tiny highlight placed on the error position."
   :group 'errtags)
 
-(defface errtags_message_face
+(defface errtags-message-face
   '((t :inherit font-lock-comment-face))
   "Face used for the appended inline error message."
   :group 'errtags)
@@ -18,7 +18,7 @@
 ;; Configuration
 ;; ---------------------------------------------------------------------------
 
-(defcustom errtags_cache_file
+(defcustom errtags-cache-file
   (let ((explicit (getenv "ERRTAGS_CACHE_FILE")))
     (cond
      ((and explicit (not (string-empty-p explicit)))
@@ -38,7 +38,7 @@
 ;; Small internal helpers
 ;; ---------------------------------------------------------------------------
 
-(defun errtags--current_buffer_basename ()
+(defun errtags--current-buffer-basename ()
   "Return the basename of the current buffer's file, or nil if none exists.
 
 This mirrors Vim's:
@@ -47,11 +47,11 @@ which means \"just the tail component of the current file name\"."
   (when buffer-file-name
     (file-name-nondirectory buffer-file-name)))
 
-(defun errtags--notice_basename (notice)
+(defun errtags--notice-basename (notice)
   "Return the basename of NOTICE's file name."
   (file-name-nondirectory (alist-get 'fname notice)))
 
-(defun errtags--line_col_to_position (line column)
+(defun errtags--line-col-to-position (line column)
   "Convert LINE and COLUMN into a buffer position in the current buffer.
 
 Vim uses 1-based line and column numbers in the notice cache.
@@ -84,11 +84,11 @@ if the line is shorter than the requested column."
 
           (point))))))
 
-(defun errtags--make-message_string (message)
+(defun errtags--make-message-string (message)
   "Build the visible text that gets appended to the line."
   (concat " # E: " message))
 
-(defun errtags--notice_parse (line)
+(defun errtags--notice-parse (line)
   "Parse a single cache LINE into a notice alist.
 
 This version intentionally uses simple colon splitting.
@@ -123,30 +123,30 @@ Return nil if the line is malformed."
               (cons 'text text)
               (cons 'type "E"))))))
 
-(defun errtags--read_cache_lines ()
+(defun errtags--read-cache-lines ()
   "Read the cache file and return its lines as a list of strings.
 
 If the cache file does not exist, return nil rather than signaling
 an error, which matches the Vim behavior of simply stopping early."
-  (when (file-readable-p errtags_cache_file)
+  (when (file-readable-p errtags-cache-file)
     (with-temp-buffer
-      (insert-file-contents errtags_cache_file)
+      (insert-file-contents errtags-cache-file)
       (split-string (buffer-string) "\n" t))))
 
-(defun errtags--make_overlay (beg end type)
+(defun errtags--make-overlay (beg end type)
   "Create a new overlay from BEG to END and tag it with TYPE.
 
 We store TYPE in a custom overlay property so we can later delete
 only the overlays created by this package."
   (let ((ov (make-overlay beg end)))
-    (overlay-put ov 'errtags_type type)
+    (overlay-put ov 'errtags-type type)
     ov))
 
 ;; ---------------------------------------------------------------------------
 ;; Core overlay logic
 ;; ---------------------------------------------------------------------------
 
-(defun errtags_add_notice (line_number column_number message)
+(defun errtags-add-notice (line-number column-number message)
   "Add one notice to the current buffer.
 
 This corresponds to the Vim function ErrtagsAddNotice.
@@ -154,12 +154,12 @@ This corresponds to the Vim function ErrtagsAddNotice.
 Two overlays are created:
   1. a tiny highlight at the error column
   2. a line-spanning overlay that appends the message at line end"
-  (let ((pos (errtags--line_col_to_position line_number column_number)))
+  (let ((pos (errtags--line-col-to-position line-number column-number)))
     (when pos
       ;; First overlay: the tiny red marker at the error position.
       ;; This is the equivalent of Vim's prop_add(... length 1).
-      (let ((highlight-overlay (errtags--make_overlay pos (min (1+ pos) (point-max)) 'highlight)))
-        (overlay-put highlight-overlay 'face 'errtags_error_face)
+      (let ((highlight-overlay (errtags--make-overlay pos (min (1+ pos) (point-max)) 'highlight)))
+        (overlay-put highlight-overlay 'face 'errtags-error-face)
         ;; `priority` helps ensure the highlight stays visible even if
         ;; other overlays or text properties are also present.
         (overlay-put highlight-overlay 'priority 1000))
@@ -172,15 +172,15 @@ Two overlays are created:
         (goto-char pos)
         (let ((bol (line-beginning-position))
               (eol (line-end-position))
-              (msg (errtags--make-message_string message)))
+              (msg (errtags--make-message-string message)))
           (when (<= bol eol)
-            (let ((message-overlay (errtags--make_overlay bol eol 'message)))
+            (let ((message-overlay (errtags--make-overlay bol eol 'message)))
               (overlay-put message-overlay 'after-string
                            ;; The text is propertized so it looks like a comment.
-                           (propertize msg 'face 'errtags_message_face))
+                           (propertize msg 'face 'errtags-message-face))
               (overlay-put message-overlay 'priority 900))))))))
 
-(defun errtags_add_notices (notices)
+(defun errtags-add-notices (notices)
   "Add all NOTICES that belong to the current buffer.
 
 The Vim code compares:
@@ -188,45 +188,45 @@ The Vim code compares:
 
 That means the notice is accepted only if the basename matches.
 We do the same here."
-  (let ((current-base (errtags--current_buffer_basename)))
+  (let ((current-base (errtags--current-buffer-basename)))
     (when current-base
       (dolist (notice notices)
-        (when (string= (errtags--notice_basename notice) current-base)
-          (errtags_add_notice
+        (when (string= (errtags--notice-basename notice) current-base)
+          (errtags-add-notice
            (alist-get 'lnum notice)
            (alist-get 'col notice)
            (alist-get 'text notice)))))))
 
-(defun errtags_parse_notices (lines)
+(defun errtags-parse-notices (lines)
   "Parse all cache LINES and return a list of notice alists."
   (let (errors)
     ;; We keep malformed lines out, just like the Vim code silently skips
     ;; lines that do not look like the expected format.
     (dolist (line lines (nreverse errors))
-      (let ((notice (errtags--notice_parse line)))
+      (let ((notice (errtags--notice-parse line)))
         (when notice
           (push notice errors))))))
 
-(defun errtags_clear_notices ()
+(defun errtags-clear-notices ()
   "Remove all overlays created by this package in the current buffer.
 
 This is the Emacs equivalent of the Vim prop_remove calls."
-  (remove-overlays (point-min) (point-max) 'errtags_type 'highlight)
-  (remove-overlays (point-min) (point-max) 'errtags_type 'message))
+  (remove-overlays (point-min) (point-max) 'errtags-type 'highlight)
+  (remove-overlays (point-min) (point-max) 'errtags-type 'message))
 
-(defun errtags_clean_notices ()
+(defun errtags-clean-notices ()
   "Clear the current buffer and truncate the cache file.
 
 This matches the Vim function that both removes visible notices
 and empties the cache file itself."
   (interactive)
-  (errtags_clear_notices)
-  (with-temp-file errtags_cache_file
+  (errtags-clear-notices)
+  (with-temp-file errtags-cache-file
     ;; Writing nothing truncates the file.
     ;; That is all the original Vim code did as well.
     ))
 
-(defun errtags_do_notices ()
+(defun errtags-do-notices ()
   "Refresh the notices in the current buffer.
 
 This is the main entry point:
@@ -235,50 +235,50 @@ This is the main entry point:
   3. parse the notices
   4. display only the ones matching this buffer"
   (interactive)
-  (errtags_clear_notices)
-  (let ((lines (errtags--read_cache_lines)))
+  (errtags-clear-notices)
+  (let ((lines (errtags--read-cache-lines)))
     (when lines
-      (let ((notices (errtags_parse_notices lines)))
-        (errtags_add_notices notices)))))
+      (let ((notices (errtags-parse-notices lines)))
+        (errtags-add-notices notices)))))
 
-(defun errtags_do_notices_hook (&rest _ignore)
-  "Hook wrapper for `errtags_do_notices`.
+(defun errtags-do-notices-hook (&rest _ignore)
+  "Hook wrapper for `errtags-do-notices`.
 
 Some Emacs hooks call functions with arguments, some do not.
 This wrapper accepts anything and ignores it, which makes it easy
 to place on ordinary hooks."
   (when (buffer-file-name)
-    (errtags_do_notices)))
+    (errtags-do-notices)))
 
 ;; ---------------------------------------------------------------------------
 ;; Automatic hookup
 ;; ---------------------------------------------------------------------------
 
 ;;;###autoload
-(define-minor-mode errtags_mode
+(define-minor-mode errtags-mode
   "Toggle Errtags mode."
   :global t
   :group 'errtags
 
-  (if errtags_mode
+  (if errtags-mode
       (progn
-        (add-hook 'find-file-hook #'errtags_do_notices_hook)
-        (add-hook 'after-save-hook #'errtags_do_notices_hook)
-        (add-hook 'window-buffer-change-functions #'errtags_do_notices_hook)
+        (add-hook 'find-file-hook #'errtags-do-notices-hook)
+        (add-hook 'after-save-hook #'errtags-do-notices-hook)
+        (add-hook 'window-buffer-change-functions #'errtags-do-notices-hook)
 
         ;; initial pass
         (dolist (buf (buffer-list))
           (with-current-buffer buf
             (when (buffer-file-name)
-              (errtags_do_notices)))))
+              (errtags-do-notices)))))
 
-    (remove-hook 'find-file-hook #'errtags_do_notices_hook)
-    (remove-hook 'after-save-hook #'errtags_do_notices_hook)
-    (remove-hook 'window-buffer-change-functions #'errtags_do_notices_hook)
+    (remove-hook 'find-file-hook #'errtags-do-notices-hook)
+    (remove-hook 'after-save-hook #'errtags-do-notices-hook)
+    (remove-hook 'window-buffer-change-functions #'errtags-do-notices-hook)
 
     (dolist (buf (buffer-list))
       (with-current-buffer buf
-        (errtags_clear_notices)))))
+        (errtags-clear-notices)))))
 
 (provide 'errtags)
 
