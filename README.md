@@ -10,7 +10,7 @@ Then, any (reasonable) editor can easily load the data.
 
 ## Screenshots
 Vim and Emacs side by side.
-[screenshot](errtags.png)
+![screenshot](errtags.png)
 
 ## Dependencies
 + Tcl
