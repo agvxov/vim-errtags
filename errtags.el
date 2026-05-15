@@ -265,7 +265,7 @@ to place on ordinary hooks."
 
   (if errtags-mode
       (progn
-        (errtags--resolve-cache-file)
+        (setq errtags-cache-file (errtags--resolve-cache-file))
 
         (add-hook 'find-file-hook #'errtags-do-notices-hook)
         (add-hook 'after-save-hook #'errtags-do-notices-hook)
