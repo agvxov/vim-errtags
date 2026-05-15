@@ -102,8 +102,11 @@ endif
 
 if expand('$ERRTAGS_CACHE_FILE') != '$ERRTAGS_CACHE_FILE'
     let g:errtags_cache = expand('$ERRTAGS_CACHE_FILE')
-else
+elseif expand('$XDG_CACHE_HOME') != '$XDG_CACHE_HOME'
     let g:errtags_cache = expand('$XDG_CACHE_HOME/errtags.tags')
+else
+    let g:errtags_cache = ""
+    echoerr "errtags: No cache; set $ERRTAGS_CACHE_FILE or $XDG_CACHE_HOME"
 endif
 
 command! ErrtagsDoNotices    :call ErrtagsDoNotices()

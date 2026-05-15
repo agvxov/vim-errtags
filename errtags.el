@@ -17,22 +17,25 @@
 ;; ---------------------------------------------------------------------------
 ;; Configuration
 ;; ---------------------------------------------------------------------------
-
-(defcustom errtags-cache-file
-  (let ((explicit (getenv "ERRTAGS_CACHE_FILE")))
-    (cond
-     ((and explicit (not (string-empty-p explicit)))
-      (expand-file-name explicit))
-
-     ((let ((xdg (getenv "XDG_CACHE_HOME")))
-        (and xdg (not (string-empty-p xdg))))
-      (expand-file-name "errtags.tags" (getenv "XDG_CACHE_HOME")))
-
-     (t
-      (expand-file-name "errtags.tags" "~/.cache"))))
+(defcustom errtags-cache-file nil
   "Path to the notice cache file."
   :type 'file
   :group 'errtags)
+
+(defun errtags--resolve-cache-file ()
+  (or errtags-cache-file
+      (let ((explicit (getenv "ERRTAGS_CACHE_FILE"))
+            (xdg (getenv "XDG_CACHE_HOME")))
+        (cond
+         ((and explicit (not (string= explicit "")))
+          (expand-file-name explicit))
+
+         ((and xdg (not (string= xdg "")))
+          (expand-file-name "errtags.tags" xdg))
+
+         (t
+          (user-error
+            "errtags: No cache; set $ERRTAGS_CACHE_FILE or $XDG_CACHE_HOME"))))))
 
 ;; ---------------------------------------------------------------------------
 ;; Small internal helpers
@@ -262,6 +265,8 @@ to place on ordinary hooks."
 
   (if errtags-mode
       (progn
+        (errtags--resolve-cache-file)
+
         (add-hook 'find-file-hook #'errtags-do-notices-hook)
         (add-hook 'after-save-hook #'errtags-do-notices-hook)
         (add-hook 'window-buffer-change-functions #'errtags-do-notices-hook)

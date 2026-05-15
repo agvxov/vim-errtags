@@ -1,13 +1,22 @@
 #!/usr/bin/tclsh
 
-set outputFilename [expr { \
-    [info exists env(ERRTAGS_CACHE_FILE)] ? \
-        $env(ERRTAGS_CACHE_FILE) : "$env(XDG_CACHE_HOME)/errtags.tags"
-}]
+if {[info exists env(ERRTAGS_CACHE_FILE)]} {
+    set outputFilename $env(ERRTAGS_CACHE_FILE)
+} elseif {[info exists env(XDG_CACHE_HOME)]} {
+    set outputFilename "$env(XDG_CACHE_HOME)/errtags.tags"
+} else {
+    puts stderr [string cat \
+        "errtags: Could not find your cache folder. " \
+        "Set \$ERRTAGS_CACHE_FILE in the environment!"
+    ]
+    exit 1
+}
 
-set ERRTAGS_SESSION [expr { \
-    [info exists env(ERRTAGS_SESSION)] ? $env(ERRTAGS_SESSION) : "" \
-}]
+if {[info exists env(ERRTAGS_SESSION)]} {
+    set ERRTAGS_SESSION $env(ERRTAGS_SESSION)
+} else {
+    set ERRTAGS_SESSION ""
+}
 
 if {$ERRTAGS_SESSION eq ""} {
     set ERRTAGS_SESSION [expr {int(rand() * 1000) + 1}]
