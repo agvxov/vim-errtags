@@ -9,8 +9,13 @@ The UNIX (righteous) way is to hook into the concrete build system.
 Then, any (reasonable) editor can easily load the data.
 
 ## Screenshots
-Vim and Emacs side by side.
-![screenshot](errtags.png)
+The Vim implementation.
+
+![screenshot-1](errtags-vim.png)
+
+The Emacs implementation.
+
+![screenshot-2](errtags-emacs.png)
 
 ## Dependencies
 + Tcl
