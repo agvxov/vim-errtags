@@ -1,12 +1,5 @@
 ;;; errtags.el --- Show compiler notices in source buffers -*- lexical-binding: t; -*-
 
-;; Usage:
-;; 
-;; (load-file "~/vim-errtags/errtags.el")
-;; (errtags_mode 1)
-;; (add-hook 'find-file-hook #'errtags_do_notices)
-;; (add-hook 'after-save-hook #'errtags_do_notices)
-
 (defgroup errtags nil
   "Display compiler notices in source buffers."
   :group 'convenience)
