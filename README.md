@@ -21,23 +21,44 @@ The Emacs implementation.
 + Tcl
 
 ## Installation
-1. Clone the source
-2. Run:
-```sh
-$ make
 
-# Does not require root, but creates ~/bin/, which must be in PATH.
-# If you do not like that, install "errtags" and "wrappers/*" to wherever you see fit.
-$ make install
+1. Clone the repo
+2. Install `errtags`
+3. Install `wrapper/*` somewhere
+4. Prepend the previous installation folder to your `$PATH`
+
+> [!CAUTION]
+> Please read the BELOW before running it!
+> You may have to modify it!
+
+Possible solution:
+```sh
+git clone --depth https://github.com/agvxov/vim-errtags.git
+cd vim-errtags
+mkdir ~/bin
+cp errtags ~/bin/
+cp wrappers/* ~/bin/
+echo 'export PATH="$HOME/bin/:$PATH"' >> ~/.bashrc
 ```
 
-3. Update your vim config
+### Vim
+4. Copy `errtags.vim` into your config (`~/.vim/plugin/`)
+5. Update your Vim config
 ```sh
 # .vimrc
 let g:errtags_events = ["BufEnter", "BufWrite"]
 ```
+6. Enjoy
 
-4. Enjoy
+### Emacs
+4. Copy `errtags.el` into your config (`~/.emacs.d/lisp/`)
+5. Update your Emacs config
+```lisp
+# .emacs.d/init.el
+(require 'errtags)
+(errtags-mode 1)
+```
+6. Enjoy
 
 ## Implementation details
 We hook into the build system by executable-shadowing the build tools.
