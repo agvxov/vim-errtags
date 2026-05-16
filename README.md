@@ -51,7 +51,7 @@ let g:errtags_events = ["BufEnter", "BufWrite"]
 7. Enjoy
 
 ### Emacs
-5. Copy `errtags.el` into your config (`~/.emacs.d/lisp/`)
+5. Copy `errtags.el` into your config (`~/.emacs.d/lisp/`; assuming `(add-to-list 'load-path "~/.emacs.d/lisp")`)
 6. Update your Emacs config
 ```lisp
 # .emacs.d/init.el
