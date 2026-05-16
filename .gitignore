@@ -1,4 +1,2 @@
 *.out
 *.tags
-*.tar
-object/*
