@@ -71,3 +71,4 @@ and consequent `gcc` processes will know to preserve the file.
 | errtags.vim | Main vim source file; processes the tags file |
 | errtags.el  | Main emacs source file; processes the tags file |
 | errtags     | Responsible for grepping error messages and storing them in a csv-like file; written in tcl for speed and my sanity's sake |
+| install.sh  | Installation script FOR DEVELOPERS |
