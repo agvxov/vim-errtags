@@ -42,23 +42,23 @@ echo 'export PATH="$HOME/bin/:$PATH"' >> ~/.bashrc
 ```
 
 ### Vim
-4. Copy `errtags.vim` into your config (`~/.vim/plugin/`)
-5. Update your Vim config
+5. Copy `errtags.vim` into your config (`~/.vim/plugin/`)
+6. Update your Vim config
 ```sh
 # .vimrc
 let g:errtags_events = ["BufEnter", "BufWrite"]
 ```
-6. Enjoy
+7. Enjoy
 
 ### Emacs
-4. Copy `errtags.el` into your config (`~/.emacs.d/lisp/`)
-5. Update your Emacs config
+5. Copy `errtags.el` into your config (`~/.emacs.d/lisp/`)
+6. Update your Emacs config
 ```lisp
 # .emacs.d/init.el
 (require 'errtags)
 (errtags-mode 1)
 ```
-6. Enjoy
+7. Enjoy
 
 ## Implementation details
 We hook into the build system by executable-shadowing the build tools.
