@@ -1,0 +1,18 @@
+#!/bin/bash
+self=$(readlink -f $0)
+
+set -o pipefail
+
+next_shellcheck=$(
+    which -a shellcheck |
+    while IFS= read -r p; do
+        [ "$(readlink -f "$p")" != "$self" ] && {
+            echo "$p"
+            break
+        }
+    done
+)
+
+$next_shellcheck -f gcc "$@" 2>&1 | errtags &
+
+exec $next_shellcheck "$@"
