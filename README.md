@@ -46,7 +46,11 @@ echo 'export PATH="$HOME/bin/:$PATH"' >> ~/.bashrc
 6. Update your Vim config
 ```sh
 # .vimrc
+# Example: reload on save
 let g:errtags_events = ["BufEnter", "BufWrite"]
+# Example: run shellcheck on every save
+#   (to have the provided wrapper update your errtags with the same breath)
+autocmd FileType sh autocmd BufWritePost <buffer> call job_start(['shellcheck', expand('%:p')])
 ```
 7. Enjoy
 
@@ -59,6 +63,20 @@ let g:errtags_events = ["BufEnter", "BufWrite"]
 (errtags-mode 1)
 ```
 7. Enjoy
+
+## Workflow
+You have your source open, hacking C like a real man.
+You feel confident in what you wrote,
+so you compile your code base like you regularly would.
+Errtags has automatically and seamlessly tapped into your real build system
+and updated your errtags cache.
+You re-save your document from muscle-memory to activate your trigger
+and missing semi-colons show up as red.
+
+Alternatively.
+You are working with the world's worst scripting language
+and you absolutely require a linter to hold your hand every character of the way;
+so whenever you save, the errors update.
 
 ## Implementation details
 We hook into the build system by executable-shadowing the build tools.
